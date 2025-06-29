@@ -5,14 +5,28 @@ use App\Http\Controllers\admin\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('authenticate', [AuthenticationController::class, 'authenticate']);
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas
+|--------------------------------------------------------------------------
+*/
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+// Rate‑limit al login: máx. 10 peticiones por minuto
+Route::post('authenticate', [AuthenticationController::class, 'authenticate'])
+     ->middleware('throttle:10,1');
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    //proteccion de rutas
+/*
+|--------------------------------------------------------------------------
+| Rutas protegidas con Sanctum
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Ejemplo de endpoint para que el frontend obtenga el usuario actual
+    Route::get('me', fn (Request $request) => $request->user());
+
     Route::get('dashboard', [DashboardController::class, 'index']);
+
     Route::post('logout', [AuthenticationController::class, 'logout']);
 });
