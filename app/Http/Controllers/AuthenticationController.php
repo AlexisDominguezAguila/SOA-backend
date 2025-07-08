@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -10,13 +9,13 @@ use Illuminate\Support\Facades\Validator;
 class AuthenticationController extends Controller
 {
     /**
-     * Iniciar sesión
+     * Iniciar sesión y generar token Sanctum Bearer
      */
     public function authenticate(Request $request)
     {
-        // 1. Validación de datos
+        // 1. Validar (sin "exists" para evitar user‑enumeration)
         $validator = Validator::make($request->all(), [
-            'email'    => ['required', 'email', 'exists:users,email'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'min:6'],
         ]);
 
@@ -28,30 +27,31 @@ class AuthenticationController extends Controller
             ], 422);
         }
 
-        // 2. Comprobar credenciales
+        // 2. Intentar login
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'status'  => false,
-                'message' => 'Credenciales inválidas',
+                'message' => 'Credenciales inválidas', // genérico
             ], 401);
         }
 
-        // 3. Generar token Sanctum (todas las habilidades '*')
-        $user  = $request->user();                  // ya está autenticado
-        $token = $user->createToken('auth_token', ['*'])->plainTextToken;
+        // 3. Generar token
+        $user        = $request->user();
+        $accessToken = $user->createToken('auth_token', ['*'])->plainTextToken;
 
         return response()->json([
             'status'  => true,
             'message' => 'Inicio de sesión exitoso',
             'data'    => [
-                'token' => $token,
-                'user'  => $user->only('id', 'name', 'email'),
+                'access_token' => $accessToken,
+                'token_type'   => 'Bearer',
+                'user'         => $user->only('id', 'name', 'email'),
             ],
-        ], 200);
+        ]);
     }
 
     /**
-     * Cerrar sesión (revoca únicamente el token actual)
+     * Cerrar sesión (revoca solo el token actual)
      */
     public function logout(Request $request)
     {
@@ -60,6 +60,6 @@ class AuthenticationController extends Controller
         return response()->json([
             'status'  => true,
             'message' => 'Cierre de sesión exitoso',
-        ], 200);
+        ]);
     }
 }

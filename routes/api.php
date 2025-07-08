@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\admin\DashboardController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Api\DeanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Rate‑limit al login: máx. 10 peticiones por minuto
+// Login (con limitador de velocidad: máx. 10 peticiones por minuto)
 Route::post('authenticate', [AuthenticationController::class, 'authenticate'])
      ->middleware('throttle:10,1');
 
@@ -20,13 +22,28 @@ Route::post('authenticate', [AuthenticationController::class, 'authenticate'])
 | Rutas protegidas con Sanctum
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Ejemplo de endpoint para que el frontend obtenga el usuario actual
+    // Usuario autenticado
     Route::get('me', fn (Request $request) => $request->user());
 
+    // Ejemplo de dashboard
     Route::get('dashboard', [DashboardController::class, 'index']);
 
+    // Logout
     Route::post('logout', [AuthenticationController::class, 'logout']);
+
+    /*
+    |----------------------------------------------------------------------
+    | Recurso Decanos
+    |----------------------------------------------------------------------
+    | Endpoints generados (prefix /api/):
+    |   GET    /deans           -> index
+    |   POST   /deans           -> store
+    |   GET    /deans/{dean}    -> show
+    |   PUT    /deans/{dean}    -> update
+    |   PATCH  /deans/{dean}    -> update
+    |   DELETE /deans/{dean}    -> destroy
+    */
+    Route::apiResource('deans', DeanController::class);
 });
