@@ -10,9 +10,23 @@ use Illuminate\Support\Facades\Storage;
 class CursoController extends Controller
 {
     public function publicIndex()
-    {
-        return Curso::where('activo', 'active')->get();
-    }
+{
+    $cursos = Curso::where('activo', 'active')->orderByDesc('created_at')->get();
+
+    return $cursos->map(function ($curso) {
+        return [
+            'id' => $curso->id,
+            'title' => $curso->titulo,
+            'description' => $curso->descripcion,
+            'speaker' => $curso->ponente,
+            'url' => $curso->url,
+            'status' => $curso->activo,
+            'image_url' => $curso->imagen ? asset('storage/' . $curso->imagen) : null,
+            'created_at' => $curso->created_at,
+        ];
+    });
+}
+
 
     public function index()
     {

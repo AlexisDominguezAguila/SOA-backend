@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Api\DeanController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\CursoController; 
+use App\Http\Controllers\Api\ComunicadoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,10 @@ Route::get('public/news',  [NewsController::class, 'publicIndex']);
 
 // Devuelve solo cursos activos 
 Route::get('public/cursos', [CursoController::class, 'publicIndex']);
+
+// Devuelve solo comunicados activos
+Route::get('public/comunicados', [ComunicadoController::class, 'publicIndex']);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -53,5 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('deans', DeanController::class);
     Route::apiResource('news',  NewsController::class);   
     Route::apiResource('cursos', CursoController::class);
+    Route::apiResource('comunicados', ComunicadoController::class);
+
 
 });
