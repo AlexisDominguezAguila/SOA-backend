@@ -13,7 +13,7 @@ class AuthenticationController extends Controller
      */
     public function authenticate(Request $request)
     {
-        // 1. Validar (sin "exists" para evitar user‑enumeration)
+        // Validar 
         $validator = Validator::make($request->all(), [
             'email'    => ['required', 'email'],
             'password' => ['required', 'min:6'],
@@ -27,15 +27,15 @@ class AuthenticationController extends Controller
             ], 422);
         }
 
-        // 2. Intentar login
+        // Intentar login
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'status'  => false,
-                'message' => 'Credenciales inválidas', // genérico
+                'message' => 'Credenciales inválidas', 
             ], 401);
         }
 
-        // 3. Generar token
+        // Generar token
         $user        = $request->user();
         $accessToken = $user->createToken('auth_token', ['*'])->plainTextToken;
 
@@ -51,7 +51,7 @@ class AuthenticationController extends Controller
     }
 
     /**
-     * Cerrar sesión (revoca solo el token actual)
+     * Cerrar sesión 
      */
     public function logout(Request $request)
     {
