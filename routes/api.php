@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\CursoController; 
 use App\Http\Controllers\Api\ComunicadoController;
 use App\Http\Controllers\Api\ConvenioController;
+use App\Http\Controllers\Api\GestionController;
+use App\Http\Controllers\Api\MiembroController;
 
 
 /*
@@ -38,6 +40,12 @@ Route::get('public/comunicados', [ComunicadoController::class, 'publicIndex']);
 //Devuelve solo convenios activos
 Route::get('public/convenios', [ConvenioController::class, 'publicIndex']);
 
+//Devuelve todas las gestiones activas 
+Route::get('public/gestiones', [GestionController::class, 'publicIndex']);
+
+//Devuelve todos los miembros activos 
+Route::get('public/miembros', [MiembroController::class, 'publicIndex']);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -65,5 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cursos', CursoController::class);
     Route::apiResource('comunicados', ComunicadoController::class);
     Route::apiResource('convenios', ConvenioController::class);
+    Route::apiResource('gestiones', GestionController::class);
+    Route::apiResource('miembros', MiembroController::class);
+
 
 });
