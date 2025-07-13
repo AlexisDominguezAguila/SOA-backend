@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ComunicadoController;
 use App\Http\Controllers\Api\ConvenioController;
 use App\Http\Controllers\Api\GestionController;
 use App\Http\Controllers\Api\MiembroController;
+use App\Http\Controllers\Api\IAController;
 
 
 /*
@@ -75,6 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('convenios', ConvenioController::class);
     Route::apiResource('gestiones', GestionController::class);
     Route::apiResource('miembros', MiembroController::class);
+    Route::post('ia/redactar', [IAController::class, 'redactarNoticia']);
+
 
 
 });
